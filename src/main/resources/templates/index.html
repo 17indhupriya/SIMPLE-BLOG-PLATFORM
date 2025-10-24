@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Blog Platform</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="description" content="A modern and professional blog platform built with Spring Boot">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <h1>Professional Blog Platform<span class="emoji">📝</span></h1>
+            <p class="subtitle">Sharing knowledge, insights, and experiences</p>
+        </header>
+
+        <!-- Navigation & Search Section -->
+        <nav class="main-nav">
+            <div class="nav-actions">
+                <a th:href="@{/posts/new}" class="btn btn-primary">✍️ Create New Post</a>
+                <a th:href="@{/}" class="btn btn-secondary">🏠 Home</a>
+            </div>
+            
+            <div class="search-container">
+                <form th:action="@{/}" method="get" class="search-form">
+                    <input type="text" name="search" th:value="${searchTerm}" placeholder="🔍 Search posts..." class="search-input">
+                    <button type="submit" class="search-btn">Search</button>
+                </form>
+            </div>
+        </nav>
+
+        <!-- Success Message -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span th:text="${successMessage}">Success message</span>
+        </div>
+
+        <!-- Posts Section -->
+        <main class="posts-container">
+            <!-- Display posts if available -->
+            <div th:if="${posts != null and !posts.empty}">
+                <article class="post-card" th:each="post : ${posts}">
+                    <h2 class="post-title" th:text="${post.title}">Post Title</h2>
+                    <div class="post-excerpt" th:text="${post.excerpt != null ? post.excerpt : (post.content.length() > 200 ? post.content.substring(0, 200) + '...' : post.content)}">Post excerpt will go here...</div>
+                    
+                    <div class="post-meta">
+                        <div class="post-info">
+                            <span class="post-author">By <strong th:text="${post.author}">Author</strong></span>
+                            <span class="post-date" th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy')}">01 Jan 2024</span>
+                            <span class="post-views" th:text="${post.viewCount} + ' views'">0 views</span>
+                        </div>
+                        
+                        <div class="post-actions">
+                            <a th:href="@{'/posts/' + ${post.id}}" class="btn btn-small">👁️ View</a>
+                            <a th:href="@{'/posts/' + ${post.id} + '/edit'}" class="btn btn-small btn-edit">✏️ Edit</a>
+                            <form th:action="@{'/posts/' + ${post.id} + '/delete'}" method="post" style="display: inline;" 
+                                  onsubmit="return confirm('Are you sure you want to delete this post?')">
+                                <button type="submit" class="btn btn-small btn-danger">🗑️ Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            
+            <!-- Empty state if no posts -->
+            <div th:if="${posts == null or posts.empty}" class="empty-state">
+                <h2>No Posts Yet 📭</h2>
+                <p>Start creating amazing content by clicking the "Create New Post" button above!</p>
+                <a th:href="@{/posts/new}" class="btn btn-primary btn-large">✍️ Create Your First Post</a>
+            </div>
+        </main>
+
+        <!-- Footer Section -->
+        <footer class="footer">
+            <p>© 2024 Professional Blog Platform. Built with ❤️ using Spring Boot & Thymeleaf</p>
+        </footer>
+    </div>
+</body>
+</html>
